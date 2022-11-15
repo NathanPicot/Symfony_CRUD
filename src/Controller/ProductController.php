@@ -2,15 +2,42 @@
 
 namespace App\Controller;
 
+use App\Form\ProductFormType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
+use Symfony\Config\Doctrine\Orm\EntityManagerConfig;
+use Twig\Environment;
 
 class ProductController extends AbstractController
 {
+    #[Route('/form', name: 'app_form')]
+    public function showForm(Environment $twig, Request $request, EntityManagerInterface $entityManager)
+    {
+        $product = new Product();
+
+        $form = $this->createForm(ProductFormType::class, $product);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $entityManager->persist($product);
+            $entityManager->flush();
+
+            return new Response('Product number'. $product->getId().'created..');
+        }
+        return new Response($twig->render('product/showForm.html.twig', [
+            'product_form'=>$form->createView()
+        ]));
+    }
+
+
+
     #[Route('/product', name: 'app_product')]
     public function index(): Response
     {
