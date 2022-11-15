@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Training 💩{% endblock %}
+
+{% block body %}
+
+<div class="">
+    {{ my_number }} <br>
+    <h1>Numbers</h1>
+    <ul>
+        {% for item in my_tab %}
+            <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
